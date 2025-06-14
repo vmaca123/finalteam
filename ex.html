@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>암호학 체험</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: #f4f9ff;
+        color: #333;
+      }
+
+      /* 상단 메뉴 */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background-color: #003366;
+        color: white;
+        padding: 1rem;
+      }
+
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .menu-btn {
+        display: block;
+        font-size: 1.6rem;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+      }
+
+      .menu-list {
+        display: none;
+        flex-direction: column;
+        background-color: #003366;
+        position: absolute;
+        top: 60px;
+        right: 1rem;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        z-index: 1000;
+      }
+
+      .menu-list a {
+        color: white;
+        padding: 0.75rem 1rem;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: background-color 0.3s ease;
+      }
+
+      .menu-list a:hover {
+        background-color: #003366;
+      }
+
+      .menu-list a:active {
+        background-color: #0d47a1;
+      }
+
+      .menu-list a.active {
+        background-color: white;
+        color: #003366;
+        font-weight: bold;
+        text-decoration: underline;
+      }
+
+      .menu-list.show {
+        display: flex;
+      }
+
+      @media (min-width: 768px) {
+        .menu-btn {
+          display: none;
+        }
+
+        .menu-list {
+          display: flex !important;
+          flex-direction: row;
+          position: static;
+          background: none;
+          gap: 1rem;
+          margin-left: auto;
+        }
+
+        .menu-list a {
+          border: none;
+          padding: 0.5rem 0.8rem;
+        }
+
+        .menu-list a.active {
+          background-color: white;
+          color: #003366;
+          border-radius: 6px;
+        }
+      }
+
+      main {
+        padding: 2rem;
+        max-width: 900px;
+        margin: auto;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-top: 2rem;
+      }
+
+      h1 {
+        color: #003366;
+      }
+
+      p {
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .button-container {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: #003366;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #0055aa;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo">🔐 웹프로그래밍</div>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div id="menuList" class="menu-list">
+          <a href="index.html" class="active">HOME</a>
+          <a href="concept.html">보안이란?</a>
+          <a href="job.html">진로 가이드</a>
+          <a href="intro.html">팀원 소개</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <h1>간단한 암호화 실습</h1>
+      <p>
+        암호학(Cryptography)은 정보를 안전하게 전달하기 위한 수학적 기술입니다.
+        대표적인 예로는 시저 암호(Caesar Cipher)가 있습니다. 이 암호는 알파벳을
+        일정한 거리만큼 이동시켜 암호화합니다.
+      </p>
+
+      <p>예시:</p>
+      <ul>
+        <li>원문: <code>HELLO</code></li>
+        <li>시프트(3): <code>KHOOR</code></li>
+      </ul>
+
+      <p>직접 해보세요! 다음 문장을 시저 암호로 변환해보세요 (시프트: 1):</p>
+      <p><strong>SECURITY</strong> → ?</p>
+
+      <p>답: <code>TFDVSJUZ</code></p>
+
+      <p>
+        이처럼 간단한 방식도 암호화의 기초 개념을 이해하는 데 도움이 됩니다.
+        실제 보안에서는 RSA, AES, SHA 등 훨씬 복잡한 알고리즘이 사용됩니다.
+      </p>
+
+      <div class="button-container">
+        <a href="index.html" class="btn">← 메인으로 돌아가기</a>
+        <a href="https://cryptohack.org/" class="btn" target="_blank"
+          >🔗 암호학 체험 사이트</a
+        >
+      </div>
+    </main>
+    <script>
+      function toggleMenu() {
+        document.getElementById('menuList').classList.toggle('show')
+      }
+
+      // 메뉴 클릭 시 active 클래스 적용
+      document.querySelectorAll('.menu-list a').forEach((link) => {
+        link.addEventListener('click', (e) => {
+          document
+            .querySelectorAll('.menu-list a')
+            .forEach((el) => el.classList.remove('active'))
+          e.target.classList.add('active')
+        })
+      })
+    </script>
+  </body>
+</html>

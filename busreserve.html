@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>스쿨버스 좌석 예약 시스템</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f2f2f2;
+        padding: 20px;
+        margin: 0;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .bus {
+        display: grid;
+        grid-template-columns: repeat(5, 60px);
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .seat {
+        width: 60px;
+        height: 60px;
+        background-color: #ddd;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .seat.booked {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .aisle {
+        pointer-events: none;
+        background: none;
+      }
+
+      .driver {
+        grid-column: span 5;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 1px solid #aaa;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none;
+        width: 300px;
+      }
+
+      .popup h3 {
+        margin-top: 0;
+      }
+
+      .popup label {
+        display: block;
+        margin-top: 10px;
+      }
+
+      .popup input {
+        width: 100%;
+        padding: 5px;
+        margin-top: 4px;
+      }
+
+      .popup button {
+        margin-top: 15px;
+        padding: 8px 12px;
+        border: none;
+        background-color: #2196f3;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .popup button.close-btn {
+        background-color: #ccc;
+        margin-left: 10px;
+      }
+
+      .popup button.cancel-btn {
+        background-color: #f44336;
+        margin-left: 10px;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        display: none;
+        z-index: 999;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>🚌 스쿨버스 좌석 예약 시스템</h2>
+    <div class="bus" id="busContainer">
+      <div class="driver" onclick="location.href='index.html'">🚍 운전석</div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 예약 정보 확인 팝업 -->
+    <div class="popup" id="infoPopup">
+      <h3>예약된 좌석 정보</h3>
+      <p><strong>좌석 번호:</strong> <span id="infoSeat"></span></p>
+      <p><strong>예약자:</strong> <span id="infoUser"></span></p>
+      <label for="verifyPw">비밀번호 확인:</label>
+      <input type="password" id="verifyPw" placeholder="비밀번호 입력" />
+      <button onclick="verifyPassword()">확인</button>
+      <button
+        class="cancel-btn"
+        id="cancelBtn"
+        onclick="cancelReservation()"
+        style="display: none"
+      >
+        예약 취소
+      </button>
+      <button class="close-btn" onclick="closePopup()">닫기</button>
+    </div>
+
+    <!-- 예약 입력 팝업 -->
+    <div class="popup" id="inputPopup">
+      <h3>좌석 예약하기</h3>
+      <p><strong>좌석 번호:</strong> <span id="inputSeat"></span></p>
+      <label for="userName">예약자 이름:</label>
+      <input type="text" id="userName" placeholder="이름 입력" />
+      <label for="userPw">비밀번호:</label>
+      <input type="password" id="userPw" placeholder="비밀번호 입력" />
+      <button onclick="saveReservation()">예약</button>
+      <button class="close-btn" onclick="closePopup()">취소</button>
+    </div>
+
+    <script>
+      const seatCount = 45
+      const busContainer = document.getElementById('busContainer')
+      const overlay = document.getElementById('overlay')
+
+      const infoPopup = document.getElementById('infoPopup')
+      const inputPopup = document.getElementById('inputPopup')
+      const infoSeat = document.getElementById('infoSeat')
+      const infoUser = document.getElementById('infoUser')
+      const verifyPw = document.getElementById('verifyPw')
+      const cancelBtn = document.getElementById('cancelBtn')
+
+      const inputSeat = document.getElementById('inputSeat')
+      const userName = document.getElementById('userName')
+      const userPw = document.getElementById('userPw')
+
+      const reservations = {
+        A3: { user: '홍길동', password: '1234' },
+        A17: { user: '김영희', password: 'abcd' },
+        A30: { user: '이철수', password: 'pass' },
+      }
+
+      let selectedSeat = ''
+
+      for (let i = 1; i <= seatCount; i++) {
+        const seatId = 'A' + i
+
+        const isLastRow = i >= 41
+        if (!isLastRow && (i - 1) % 4 === 2) {
+          const aisle = document.createElement('div')
+          aisle.className = 'seat aisle'
+          busContainer.appendChild(aisle)
+        }
+
+        const seat = document.createElement('div')
+        seat.className = 'seat'
+        seat.textContent = seatId
+        seat.dataset.id = seatId
+
+        if (reservations[seatId]) {
+          seat.classList.add('booked')
+        }
+
+        seat.addEventListener('click', () => handleSeatClick(seatId))
+        busContainer.appendChild(seat)
+      }
+
+      function handleSeatClick(seatId) {
+        selectedSeat = seatId
+        if (reservations[seatId]) {
+          infoSeat.textContent = seatId
+          infoUser.textContent = reservations[seatId].user
+          verifyPw.value = ''
+          cancelBtn.style.display = 'none'
+          showPopup(infoPopup)
+        } else {
+          inputSeat.textContent = seatId
+          userName.value = ''
+          userPw.value = ''
+          showPopup(inputPopup)
+        }
+      }
+
+      function showPopup(popup) {
+        popup.style.display = 'block'
+        overlay.style.display = 'block'
+      }
+
+      function closePopup() {
+        infoPopup.style.display = 'none'
+        inputPopup.style.display = 'none'
+        overlay.style.display = 'none'
+      }
+
+      function saveReservation() {
+        const name = userName.value.trim()
+        const pw = userPw.value.trim()
+
+        if (!name || !pw) {
+          alert('이름과 비밀번호를 모두 입력해주세요.')
+          return
+        }
+
+        reservations[selectedSeat] = { user: name, password: pw }
+        const seatEl = document.querySelector(`[data-id="${selectedSeat}"]`)
+        if (seatEl) seatEl.classList.add('booked')
+
+        closePopup()
+        alert(`${selectedSeat} 좌석이 예약되었습니다.`)
+      }
+
+      function verifyPassword() {
+        const pw = verifyPw.value.trim()
+        if (pw === reservations[selectedSeat].password) {
+          alert('비밀번호 확인 완료. 예약을 취소할 수 있습니다.')
+          cancelBtn.style.display = 'inline-block'
+        } else {
+          alert('비밀번호가 일치하지 않습니다.')
+        }
+      }
+
+      function cancelReservation() {
+        if (confirm(`${selectedSeat} 좌석의 예약을 취소하시겠습니까?`)) {
+          delete reservations[selectedSeat]
+          const seatEl = document.querySelector(`[data-id="${selectedSeat}"]`)
+          if (seatEl) seatEl.classList.remove('booked')
+          closePopup()
+          alert('예약이 취소되었습니다.')
+        }
+      }
+    </script>
+  </body>
+</html>

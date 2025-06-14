@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>진로 가이드</title>
+    <style>
+      body {
+        font-family: 'Noto Sans KR', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f7f9fc;
+        color: #333;
+      }
+
+      header {
+        background: #001f3f;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      main {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+
+      h1 {
+        color: #004d7a;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        margin-top: 2rem;
+        color: #003366;
+      }
+
+      p,
+      ul {
+        margin-bottom: 1rem;
+        line-height: 1.7;
+      }
+
+      ul {
+        padding-left: 1.2rem;
+      }
+
+      a.back {
+        display: inline-block;
+        margin-top: 2rem;
+        text-decoration: none;
+        background: #004d7a;
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+      }
+
+      input[type='text'] {
+        width: 100%;
+        max-width: 400px;
+        padding: 0.6rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+      }
+
+      .section {
+        margin-bottom: 2rem;
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h2>🎓 진로 가이드</h2>
+    </header>
+    <main>
+      <h1>보안 전문가로 가는 길</h1>
+      <p>
+        정보보안과 암호학은 다양한 산업 분야에서 점점 더 중요한 역할을 하고
+        있습니다. 진로를 고려하고 있다면 다음과 같은 단계를 거칠 수 있습니다.
+      </p>
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="예: 자격증, 대학원, 프로그래밍 등으로 검색해보세요"
+      />
+
+      <div class="section">
+        <h3>1. 전공 학습</h3>
+        <ul>
+          <li>정보보호, 컴퓨터공학, 수학, 전산학 등 관련 전공</li>
+          <li>기초 프로그래밍(C, Python), 네트워크 구조 이해</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>2. 자격증 취득</h3>
+        <ul>
+          <li>국내: 정보보안기사, 산업보안관리사</li>
+          <li>국제: CISSP, CEH, CompTIA Security+</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>3. 경력 개발</h3>
+        <ul>
+          <li>보안 솔루션 기업, 금융기관, 공공기관, 연구소 등 진출 가능</li>
+          <li>
+            SIEM, 리버스 엔지니어링, 모의해킹, 암호 분석 등 세부 분야 선택
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>4. 학문적 진로</h3>
+        <ul>
+          <li>정보보호 대학원, 암호학 연구실 등에서 심화 연구</li>
+          <li>교수, 연구원, 국가 정책 자문 등의 역할 가능</li>
+        </ul>
+      </div>
+
+      <a href="index.html" class="back">← 메인으로 돌아가기</a>
+    </main>
+
+    <script>
+      const input = document.getElementById('searchInput')
+      const sections = document.querySelectorAll('.section')
+
+      input.addEventListener('input', () => {
+        const keyword = input.value.toLowerCase()
+
+        sections.forEach((section) => {
+          const title = section.querySelector('h3').textContent.toLowerCase()
+          const content = section.textContent.toLowerCase()
+
+          if (title.includes(keyword) || content.includes(keyword)) {
+            section.style.display = 'block'
+          } else {
+            section.style.display = 'none'
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
